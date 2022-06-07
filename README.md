@@ -1,6 +1,6 @@
 ![GitHub top language](https://img.shields.io/github/languages/top/xcodebuild/localapp?style=for-the-badge)
 # localapp
-Rust CLI to convert webpage into desktop app with tarui under 10 MB.
+Rust CLI to convert webpage into desktop app with tarui under 3 MB.
 
 ## Install
 
