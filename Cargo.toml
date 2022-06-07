@@ -2,7 +2,7 @@
 name = "localapp"
 version = "0.1.0"
 edition = "2021"
-description = "Rust CLI to convert webpage into desktop app with tarui under 3 MB"
+description = "Rust CLI to convert webpage into desktop app with tauri under 3 MB"
 license = "MIT"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
