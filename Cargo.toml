@@ -1,0 +1,27 @@
+[package]
+name = "localapp"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+clap = { version = "3.1.18", features = ["derive"] }
+reqwest = { version = "0.11", features = [
+    "json",
+    "native-tls",
+] } # reqwest with JSON parsing support
+futures = "0.3" # for our async / await blocks
+tokio = { version = "1.12.0", features = ["full"] } # for our async runtime
+regex = "1"
+website-icon-extract = { version = "0.5.0" }
+tempdir = { version = "0.3.7" }
+once_cell = { version = "1.12.0" }
+download_rs = { version = "0.2.0", features = ["sync_download"] }
+log = "0.4"
+tauri-cli = { version = "1.0.0-rc.13" }
+substring = "1.4.5"
+json = "0.12.4"
+write-to-file = "1.0.2"
+open = "1"
+sanitize_html = "0.7.0"
