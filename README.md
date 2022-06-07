@@ -24,3 +24,9 @@ localapp <you-website-url>
 - Acceptable memory footprint with system webview.
 - Cross-platform based on rust toolchain and tauri.
 
+
+## Screenshot
+
+flomo in macOS and M1 Macbook Pro:
+
+![](https://s1.ax1x.com/2022/06/07/XDyfne.png)
