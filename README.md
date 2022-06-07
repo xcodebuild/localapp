@@ -1,3 +1,4 @@
+![GitHub top language](https://img.shields.io/github/languages/top/xcodebuild/localapp?style=for-the-badge)
 # localapp
 Rust CLI to convert webpage into desktop app with tarui under 10 MB.
 
@@ -16,4 +17,10 @@ cargo install localapp
 localapp <you-website-url>
 # For example localapp https://flomoapp.com
 ```
+
+## Why localapp
+
+- No electron, `2.6 MB dmg` for flomo example.
+- Acceptable memory footprint with system webview.
+- Cross-platform based on rust toolchain and tarui.
 
