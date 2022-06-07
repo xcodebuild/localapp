@@ -23,12 +23,13 @@ pub fn build(name: String, url: String, icon_path: String) {
 
 
     // update main.rs to patch some code
-    let main_rs = r#"
+    let main_rs = format!("{}{}{}", r#"
     #![cfg_attr(
         all(not(debug_assertions), target_os = "windows"),
         windows_subsystem = "windows"
       )]
-      use tauri::{Menu, MenuItem, Submenu};
+      use tauri::{Menu, MenuItem, Submenu, WindowBuilder, WindowUrl};
+      use tauri::Manager;
       
       fn main() {
           let about_menu = Submenu::new("App", Menu::new()
@@ -60,16 +61,45 @@ let menu = Menu::new()
   .add_submenu(view_menu)
   .add_submenu(window_menu);
 
-        tauri::Builder::default()
-          .menu(menu)
-          .run(tauri::generate_context!())
-          .expect("error while running tauri application");
-      }
-"#;
+  tauri::Builder::default()
+  .menu(menu)
+  .setup(|app| {
+    WindowBuilder::new(app, "core", WindowUrl::App(""#, url, r#"".into()))
+      .initialization_script("\
+      window.addEventListener('load', () => {\
+        document.addEventListener('compositionend', function(e) {\
+          e.preventDefault();\
+          e.stopPropagation();\
+        }, true);\
+      })")
+      .build()?;
+    Ok(())
+  })
+      .run(tauri::generate_context!())
+      .expect("error while running tauri application");
+  }
+"#);
 
     let mainRsPath =  Path::new(wd).join("src-tauri/src/main.rs");
 
     write_to_file::write_to_file(mainRsPath.clone(), main_rs);
+
+    // write info.plist
+    let plist = r#"
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+    <plist version="1.0">
+    <dict>
+      <key>NSCameraUsageDescription</key>
+      <string>Request camera access for WebRTC</string>
+      <key>NSMicrophoneUsageDescription</key>
+      <string>Request microphone access for WebRTC</string>
+    </dict>
+    </plist>
+    "#;
+
+    let plistPath =  Path::new(wd).join("src-tauri/Info.plist");
+    write_to_file::write_to_file(plistPath.clone(), plist);
 
     // build
 
