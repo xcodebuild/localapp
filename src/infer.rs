@@ -5,10 +5,11 @@ use reqwest;
 use regex::Regex;
 use sanitize_html::{sanitize_str, rules::predefined::DEFAULT};
 use tokio::task::spawn_blocking;
-use website_icon_extract::ImageLink;
 use download_rs::sync_download::Download;
 use log::{info, trace, warn};
 use substring::Substring;
+use site_icons::Icons;
+
 
 use crate::{consts::{USER_AGENT_REQUEST, TEMP_DIR}};
 
@@ -37,8 +38,11 @@ pub async fn infer_title(url: String) -> String {
 }
 
 pub async fn infer_icon(url: String) -> String {
-    let list = spawn_blocking(move || {ImageLink::from_website(url, USER_AGENT_REQUEST, 5).unwrap()}).await.unwrap();
-    let icon = &list[0].url.to_string();
+    let mut icons = Icons::new();
+    // scrape the icons from a url
+    icons.load_website(&url).await;
+    let entries = icons.entries().await;
+    let icon = &entries[0].url.to_string();
     let icon_path = Path::new(&TEMP_DIR.as_ref()).join("icon.png");
     let icon_path_string = icon_path.as_path().to_str();
     let download = Download::new(icon, icon_path_string,None);
