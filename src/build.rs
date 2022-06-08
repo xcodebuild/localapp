@@ -24,6 +24,10 @@ pub fn build(name: String, url: String, icon_path: String) {
     appJsonObject["tauri"]["bundle"]["identifier"] = generate(10, charset).into();
     appJsonObject["tauri"]["bundle"]["icon"] = array![icon_path];
 
+    appJsonObject["tauri"]["windows"][0]["width"] = 1200.into();
+    appJsonObject["tauri"]["windows"][0]["height"] = 800.into();
+
+
     write_to_file::write_to_file(appJsonPath.clone(), json::stringify(appJsonObject));
 
 
