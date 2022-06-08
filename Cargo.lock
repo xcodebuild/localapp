@@ -1671,7 +1671,7 @@ dependencies = [
 
 [[package]]
 name = "localapp"
-version = "0.1.4"
+version = "0.1.5"
 dependencies = [
  "clap",
  "download_rs",
@@ -1680,6 +1680,7 @@ dependencies = [
  "log",
  "once_cell",
  "open",
+ "random-string",
  "regex",
  "reqwest 0.11.10",
  "sanitize_html",
@@ -2638,6 +2639,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "16abd0c1b639e9eb4d7c50c0b8100b0d0f849be2349829c740fe8e6eb4816429"
 dependencies = [
  "rand_core 0.5.1",
+]
+
+[[package]]
+name = "random-string"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cf4e63111ec5292d8af9c220f06fe3bb87991cc78b6f1f7e291d1ae6b8a60817"
+dependencies = [
+ "fastrand",
 ]
 
 [[package]]
