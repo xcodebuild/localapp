@@ -23,7 +23,7 @@ pub fn build(name: String, url: String, icon_path: String) {
 
 
     // update main.rs to patch some code
-    let main_rs = format!("{}{}{}", r#"
+    let main_rs = format!("{}{}{}{}{}", r#"
     #![cfg_attr(
         all(not(debug_assertions), target_os = "windows"),
         windows_subsystem = "windows"
@@ -64,6 +64,8 @@ let menu = Menu::new()
   tauri::Builder::default()
   .menu(menu)
   .setup(|app| {
+    let main_window = app.get_window("main").unwrap();
+  main_window.hide();
     WindowBuilder::new(app, "core", WindowUrl::App(""#, url, r#"".into()))
       .initialization_script("\
       window.addEventListener('load', () => {\
@@ -72,8 +74,16 @@ let menu = Menu::new()
           e.stopPropagation();\
         }, true);\
       })")
+      .title(""#, name, r#"")
+      .enable_clipboard_access()
       .build()?;
     Ok(())
+  })
+  .on_page_load(|window, payload| {
+    if (window.is_visible().expect("get visible failed") == false) {
+      println!("page close");
+      window.close();
+    }
   })
       .run(tauri::generate_context!())
       .expect("error while running tauri application");
