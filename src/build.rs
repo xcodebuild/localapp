@@ -1,10 +1,7 @@
 use std::{env::{set_current_dir, current_dir}, path::Path, fs, array};
 
-use futures::StreamExt;
 use json::array;
 use tauri_cli;
-use random_string::generate;
-
 
 use crate::consts::{TEMP_DIR, APPNAME};
 
@@ -19,9 +16,7 @@ pub fn build(name: String, url: String, icon_path: String) {
     let appJson = fs::read_to_string(appJsonPath.clone()).expect("File should be opened");
     let mut appJsonObject = json::parse(&appJson).unwrap();
 
-    let charset = "1234567890abcksdljfsdngkjsde";
-
-    appJsonObject["tauri"]["bundle"]["identifier"] = generate(10, charset).into();
+    appJsonObject["tauri"]["bundle"]["identifier"] = APPNAME.into();
     appJsonObject["tauri"]["bundle"]["icon"] = array![icon_path];
 
     write_to_file::write_to_file(appJsonPath.clone(), json::stringify(appJsonObject));
