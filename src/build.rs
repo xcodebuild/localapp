@@ -18,10 +18,7 @@ pub fn build(name: String, url: String, icon_path: String) {
 
     appJsonObject["tauri"]["bundle"]["identifier"] = APPNAME.into();
     appJsonObject["tauri"]["bundle"]["icon"] = array![icon_path];
-
-    appJsonObject["tauri"]["windows"][0]["width"] = 1200.into();
-    appJsonObject["tauri"]["windows"][0]["height"] = 800.into();
-
+    appJsonObject["tauri"]["windows"] = array![];
 
     write_to_file::write_to_file(appJsonPath.clone(), json::stringify(appJsonObject));
 
@@ -68,8 +65,6 @@ let menu = Menu::new()
   tauri::Builder::default()
   .menu(menu)
   .setup(|app| {
-    let main_window = app.get_window("main").unwrap();
-  main_window.hide();
     WindowBuilder::new(app, "core", WindowUrl::App(""#, url, r#"".into()))
       .initialization_script("\
       window.addEventListener('load', () => {\
@@ -80,14 +75,9 @@ let menu = Menu::new()
       })")
       .title(""#, name, r#"")
       .enable_clipboard_access()
+      .inner_size(1200.0, 800.0)
       .build()?;
     Ok(())
-  })
-  .on_page_load(|window, payload| {
-    if (window.is_visible().expect("get visible failed") == false) {
-      println!("page close");
-      window.close();
-    }
   })
       .run(tauri::generate_context!())
       .expect("error while running tauri application");
