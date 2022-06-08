@@ -7,9 +7,8 @@ use sanitize_html::{sanitize_str, rules::predefined::DEFAULT};
 use tokio::task::spawn_blocking;
 use download_rs::sync_download::Download;
 use log::{info, trace, warn};
-use substring::Substring;
 use site_icons::Icons;
-
+use website_icon_extract::ImageLink;
 
 use crate::{consts::{USER_AGENT_REQUEST, TEMP_DIR}};
 
@@ -38,14 +37,25 @@ pub async fn infer_title(url: String) -> String {
 }
 
 pub async fn infer_icon(url: String) -> String {
-    let mut icons = Icons::new();
-    // scrape the icons from a url
-    icons.load_website(&url).await;
-    let entries = icons.entries().await;
-    let icon = &entries[0].url.to_string();
+    let url_str = url.clone();
+    let icon_list = spawn_blocking(move || {ImageLink::from_website(url_str, USER_AGENT_REQUEST, 5).unwrap()}).await.unwrap();
+
+    let icon: String = if icon_list.len() > 0 {
+        let iconUrl = &icon_list[0].url;
+        iconUrl.to_string()
+    } else {
+        let mut icons = Icons::new();
+        // scrape the icons from a url
+        icons.load_website(&(url)).await;
+        let entries = icons.entries().await;
+        let iconUrl = &entries[0].url;
+        iconUrl.to_string()
+    };
+
     let icon_path = Path::new(&TEMP_DIR.as_ref()).join("icon.png");
     let icon_path_string = icon_path.as_path().to_str();
-    let download = Download::new(icon, icon_path_string,None);
+
+    let download = Download::new(&icon, icon_path_string,None);
 
     match download.download() {
         Ok(_) => info!("Download icon success: {:?}", icon_path_string),
