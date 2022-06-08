@@ -10,6 +10,7 @@ license = "MIT"
 clap = { version = "3.1.18", features = ["derive"] }
 reqwest = { version = "0.11", features = [
     "json",
+    "blocking",
     "native-tls",
 ] } # reqwest with JSON parsing support
 futures = "0.3" # for our async / await blocks
@@ -26,4 +27,3 @@ write-to-file = "1.0.2"
 open = "1"
 sanitize_html = "0.7.0"
 site_icons = "0.1.11"
-website-icon-extract = "0.5.0"
