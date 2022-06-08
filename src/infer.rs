@@ -7,7 +7,7 @@ use reqwest;
 use sanitize_html::{rules::predefined::DEFAULT, sanitize_str};
 use site_icons::{IconKind, Icons};
 use tokio::task::spawn_blocking;
-
+use website_icon_extract::ImageLink;
 use crate::consts::{TEMP_DIR, USER_AGENT_REQUEST};
 
 pub async fn get_content(url: String) -> String {
@@ -39,26 +39,37 @@ pub async fn infer_icon(url: String) -> String {
     icons.load_website(&(url)).await;
     let entries = icons.entries().await;
 
-    let icon = {
-        let mut icon_str = entries[0].url.to_string();
-        let mut size = 0;
-        for entry in entries {
-            let height = if entry.info.size().is_none() {
-                0
-            } else {
-                entry.info.size().unwrap().height
-            };
-            if entry.kind == IconKind::AppIcon && (size == 0 || height > size) {
-                icon_str = entry.url.to_string();
-                size = height;
+    let url_str = url.clone();
+    let icon_list = spawn_blocking(move || {ImageLink::from_website(url_str, USER_AGENT_REQUEST, 5).unwrap()}).await.unwrap();
+
+    let icon: String = if icon_list.len() > 0 {
+        let iconUrl = &icon_list[0].url;
+        iconUrl.to_string()
+    } else {
+        let icon_fallback = {
+            let mut icon_str = entries[0].url.to_string();
+            let mut size = 0;
+            for entry in entries {
+                let height = if entry.info.size().is_none() {
+                    0
+                } else {
+                    entry.info.size().unwrap().height
+                };
+                if entry.kind == IconKind::AppIcon && (size == 0 || height > size) {
+                    icon_str = entry.url.to_string();
+                    size = height;
+                }
             }
-        }
-        icon_str
+            icon_str
+        };
+        icon_fallback
     };
+
+    
 
     println!("Icon: {:?}", &icon);
 
-    let icon_path = Path::new(&TEMP_DIR.as_ref()).join("icon.png");
+    let icon_path = Path::new(&TEMP_DIR.path()).join("icon.png");
     let icon_path_string = icon_path.as_path().to_str().unwrap();
 
     let mut file = std::fs::File::create(icon_path_string).unwrap();

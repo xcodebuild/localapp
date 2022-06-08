@@ -7,7 +7,7 @@ use crate::consts::{TEMP_DIR, APPNAME};
 
 pub fn build(name: String, url: String, icon_path: String) {
     let cwd = current_dir().unwrap();
-    let wdPath = TEMP_DIR.as_ref().to_owned();
+    let wdPath = TEMP_DIR.path().to_owned();
     let wd = wdPath.to_str().unwrap();
     tauri_cli::run(["init", "-A", &name, "--ci", "-d", wd, "-W", &name, "-l", "-D", &url].into_iter(), Some("tauri".to_string()));
 
