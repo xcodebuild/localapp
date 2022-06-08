@@ -28,7 +28,12 @@ pub async fn get_content(url: String) -> String {
 pub async fn infer_title(url: String) -> String {
     let content = get_content(url).await;
     let re = Regex::new(r"<title>(.*?)</title>").unwrap();
-    let result = re.find(&content).unwrap().as_str().to_string();
+    let find_result = re.find(&content);
+    let result = if find_result.is_none() {
+        "LocalApp".to_string()
+    } else {
+        find_result.unwrap().as_str().to_string()
+    };
     let sanitized_result: String = sanitize_str(&DEFAULT, &result).unwrap();
     return sanitized_result.to_string();
 }
