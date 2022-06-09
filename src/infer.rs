@@ -74,7 +74,7 @@ pub async fn infer_icon(url: String) -> String {
 
     println!("Icon: {:?}", &icon);
 
-    let icon_path = Path::new(&TEMP_DIR.path()).join("icon.png");
+    let icon_path = Path::new(&TEMP_DIR.to_string()).join("icon.png");
     let icon_path_string = icon_path.as_path().to_str().unwrap();
 
     let mut file = std::fs::File::create(icon_path_string).unwrap();

@@ -4,23 +4,33 @@ use json::array;
 use tauri_cli;
 
 use crate::consts::{TEMP_DIR, APPNAME};
+use std::fs::File;
+use std::io::Write;
+
 
 pub fn build(name: String, url: String, icon_path: String) {
     let cwd = current_dir().unwrap();
-    let wdPath = TEMP_DIR.path().to_owned();
-    let wd = wdPath.to_str().unwrap();
-    tauri_cli::run(["init", "-A", &name, "--ci", "-d", wd, "-W", &name, "-l", "-D", &url].into_iter(), Some("tauri".to_string()));
+    let wd_path = TEMP_DIR.to_string();
+    let wd = wd_path.as_str();
+    tauri_cli::run(["init", "-A", &name, "--ci", "-d", wd, "-W", &name, "-l", "-D", &url].into_iter(), Some("tauri".to_string())).unwrap();
 
     // update JSON config
-    let appJsonPath =  Path::new(wd).join("src-tauri/tauri.conf.json");
-    let appJson = fs::read_to_string(appJsonPath.clone()).expect("File should be opened");
-    let mut appJsonObject = json::parse(&appJson).unwrap();
+    let app_json_path =  Path::new(wd).join("src-tauri/tauri.conf.json");
+    let app_json = fs::read_to_string(app_json_path.clone()).expect("File should be opened");
+    let mut app_json_object = json::parse(&app_json).unwrap();
 
-    appJsonObject["tauri"]["bundle"]["identifier"] = APPNAME.into();
-    appJsonObject["tauri"]["bundle"]["icon"] = array![icon_path];
-    appJsonObject["tauri"]["windows"] = array![];
+    app_json_object["tauri"]["bundle"]["identifier"] = APPNAME.into();
+    app_json_object["tauri"]["bundle"]["icon"] = array![icon_path];
+    app_json_object["tauri"]["windows"] = array![];
+    app_json_object["tauri"]["windows"] = array![];
 
-    write_to_file::write_to_file(appJsonPath.clone(), json::stringify(appJsonObject));
+    app_json_object["build"]["distDir"] = url.clone().into();
+    app_json_object["build"]["devPath"] = url.clone().into();
+
+    app_json_object["package"]["productName"] = name.clone().into();
+
+    let mut app_json_output = File::create(app_json_path.clone()).unwrap();
+    write!(app_json_output, "{}", json::stringify(app_json_object)).unwrap();
 
 
     // update main.rs to patch some code
@@ -73,7 +83,7 @@ let menu = Menu::new()
           e.stopPropagation();\
         }, true);\
       })")
-      .title(""#, name, r#"")
+      .title(""#, name.clone(), r#"")
       .enable_clipboard_access()
       .inner_size(1200.0, 800.0)
       .build()?;
@@ -84,9 +94,9 @@ let menu = Menu::new()
   }
 "#);
 
-    let mainRsPath =  Path::new(wd).join("src-tauri/src/main.rs");
-
-    write_to_file::write_to_file(mainRsPath.clone(), main_rs);
+    let main_rs_path =  Path::new(wd).join("src-tauri/src/main.rs");
+    let mut main_rs_output = File::create(main_rs_path.clone()).unwrap();
+    write!(main_rs_output, "{}", main_rs).unwrap();
 
     // write info.plist
     let plist = r#"
@@ -102,16 +112,17 @@ let menu = Menu::new()
     </plist>
     "#;
 
-    let plistPath =  Path::new(wd).join("src-tauri/Info.plist");
-    write_to_file::write_to_file(plistPath.clone(), plist);
+    let plist_path =  Path::new(wd).join("src-tauri/Info.plist");
+    let mut output = File::create(plist_path.clone()).unwrap();
+    write!(output, "{}", plist).unwrap();
 
     // build
 
-    set_current_dir(wd);
-    tauri_cli::run(["build"], Some("tauri".to_string()));
+    set_current_dir(wd).unwrap();
+    tauri_cli::run(["build"], Some("tauri".to_string())).unwrap();
 
 
-    let openPath = Path::new(wd).join("./src-tauri/target/release/bundle");
+    let open_path = Path::new(wd).join("./src-tauri/target/release/bundle");
 
-    open::that(openPath.clone());
+    open::that(open_path.clone()).unwrap();
 }

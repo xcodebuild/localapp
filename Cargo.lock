@@ -1689,7 +1689,6 @@ dependencies = [
  "tempdir",
  "tokio 1.19.2",
  "website-icon-extract",
- "write-to-file",
 ]
 
 [[package]]
@@ -4462,12 +4461,6 @@ checksum = "80d0f4e272c85def139476380b12f9ac60926689dd2e01d4923222f40580869d"
 dependencies = [
  "winapi 0.3.9",
 ]
-
-[[package]]
-name = "write-to-file"
-version = "1.0.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "da1e5b41d72a6892b2497c9838279c6164fd80d52a883ad875b94a1c131a9a3b"
 
 [[package]]
 name = "ws2_32-sys"

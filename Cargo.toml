@@ -23,7 +23,6 @@ log = "0.4"
 tauri-cli = { version = "1.0.0-rc.13" }
 substring = "1.4.5"
 json = "0.12.4"
-write-to-file = "1.0.2"
 open = "1"
 sanitize_html = "0.7.0"
 site_icons = "0.1.11"
