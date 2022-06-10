@@ -1,7 +1,10 @@
 use std::{env::{set_current_dir, current_dir}, path::Path, fs, array};
 
+use futures::StreamExt;
 use json::array;
 use tauri_cli;
+use random_string::generate;
+
 
 use crate::consts::{TEMP_DIR, APPNAME};
 use std::fs::File;
@@ -19,10 +22,12 @@ pub fn build(name: String, url: String, icon_path: String) {
     let app_json = fs::read_to_string(app_json_path.clone()).expect("File should be opened");
     let mut app_json_object = json::parse(&app_json).unwrap();
 
-    app_json_object["tauri"]["bundle"]["identifier"] = APPNAME.into();
+    app_json_object["tauri"]["windows"] = array![];
+    app_json_object["tauri"]["windows"] = array![];
+    let charset = "1234567890abcksdljfsdngkjsde";
+
+    app_json_object["tauri"]["bundle"]["identifier"] = generate(10, charset).into();
     app_json_object["tauri"]["bundle"]["icon"] = array![icon_path];
-    app_json_object["tauri"]["windows"] = array![];
-    app_json_object["tauri"]["windows"] = array![];
 
     app_json_object["build"]["distDir"] = url.clone().into();
     app_json_object["build"]["devPath"] = url.clone().into();
