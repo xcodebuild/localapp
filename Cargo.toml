@@ -1,6 +1,6 @@
 [package]
 name = "localapp"
-version = "0.1.8"
+version = "0.1.9"
 edition = "2021"
 description = "Rust CLI to convert webpage into desktop app with tauri under 3 MB"
 license = "MIT"
