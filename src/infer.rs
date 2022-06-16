@@ -48,8 +48,8 @@ pub async fn infer_icon(url: String) -> String {
     let icon_list = spawn_blocking(move || {ImageLink::from_website(url_str, USER_AGENT_REQUEST, 5).unwrap()}).await.unwrap();
 
     let icon: String = if icon_list.len() > 0 {
-        let iconUrl = &icon_list[0].url;
-        iconUrl.to_string()
+        let icon_url = &icon_list[0].url;
+        icon_url.to_string()
     } else {
         let icon_fallback = {
             let mut icon_str = entries[0].url.to_string();

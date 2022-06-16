@@ -19,7 +19,7 @@ pub fn build(name: String, url: String, icon_path: String) {
 
     // update JSON config
     let app_json_path =  Path::new(wd).join("src-tauri/tauri.conf.json");
-    let app_json = fs::read_to_string(app_json_path.clone()).expect("File should be opened");
+    let app_json = fs::read_to_string(app_json_path.clone()).expect("App.json should be opened");
     let mut app_json_object = json::parse(&app_json).unwrap();
 
     app_json_object["tauri"]["windows"] = array![];

@@ -15,7 +15,9 @@ cargo install localapp
 
 ```
 localapp <you-website-url>
-# For example localapp https://flomoapp.com
+# For example
+# localapp https://flomoapp.com
+# localapp -i <icon-path> -t <Title> <you-website-url>
 ```
 
 ## Why localapp
